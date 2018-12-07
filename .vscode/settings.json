@@ -1,0 +1,17 @@
+{
+  // Place your settings in this file to overwrite default and user settings.
+  "editor.formatOnSave": true,
+  "files.associations": {
+    "**/src/**/*.js": "javascriptreact",
+  },
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "files.exclude": {
+    "**/.git": true,
+    "**/node_modules": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "assets": true
+  }
+}
