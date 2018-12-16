@@ -1,6 +1,6 @@
 import * as crypto from "crypto";
 import config from "../../config";
-import oauth2 from "../utils/oauth";
+import { oauth2 } from "../utils";
 
 exports.handler = (event, context, callback) => {
   const { shop } = event.queryStringParameters;

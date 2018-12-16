@@ -10,10 +10,10 @@ export function isValidHostname(shopHostName) {
     /^[a-zA-Z0-9-\s\.]*$/.test(shopHostName)
   );
 }
-export function getStateFromCookies(headers) {
+export function getKeyFromCookies(headers, key) {
   const cookieStr = headers ? headers.cookie || "" : "";
   const cookies = cookie.parse(cookieStr);
-  return cookies.state ? cookies.state : null;
+  return cookies[key] ? cookies[key] : null;
 }
 
 export function getShopFromHostname(shopHostName) {
@@ -25,7 +25,7 @@ export function getShopFromHostname(shopHostName) {
     : null;
 }
 
-export default function oauth2Instance(shop) {
+export function oauth2(shop) {
   const credentials = {
     client: {
       id: config.clientId,

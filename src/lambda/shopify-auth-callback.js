@@ -1,14 +1,15 @@
 import config from "../../config";
-import oauth2, {
+import {
+  oauth2,
   isValidHostname,
-  getStateFromCookies,
+  getKeyFromCookies,
   getShopFromHostname
-} from "../utils/oauth";
+} from "../utils";
 
 exports.handler = (event, context, callback) => {
   const { code, state, shop: shopHostname } = event.queryStringParameters;
   const shop = getShopFromHostname(shopHostname);
-  const storedState = getStateFromCookies(event.headers);
+  const storedState = getKeyFromCookies(event.headers, "state");
 
   // bail if state is invalid or shop is incorrect format
   if (
