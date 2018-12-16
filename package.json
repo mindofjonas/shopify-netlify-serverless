@@ -4,8 +4,12 @@
   "private": true,
   "dependencies": {
     "babel-loader": "^8.0.4",
+    "cookie": "^0.3.1",
+    "crypto": "^1.0.1",
     "dead-simple-redux-helper": "^0.0.1",
+    "dotenv": "^6.2.0",
     "http-proxy-middleware": "^0.19.1",
+    "knex": "^0.16.2",
     "netlify-lambda": "^1.1.0",
     "npm-run-all": "^4.1.5",
     "react": "^16.6.3",

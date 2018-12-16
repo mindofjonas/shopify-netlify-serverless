@@ -1,78 +1,38 @@
+import * as crypto from "crypto";
 import oauth2, { config } from "../utils/oauth";
 
-/* Do initial auth redirect */
 exports.handler = (event, context, callback) => {
-  /* Generate authorizationURI */
-  const authorizationURI = oauth2.authorizationCode.authorizeURL({
+  const { shop } = event.queryStringParameters;
+  const state = crypto.randomBytes(20).toString("hex");
+
+  if (event.httpMethod !== "GET") {
+    return callback(null, { statusCode: 405, body: "Method Not Allowed" });
+  }
+
+  if (!shop) {
+    return callback(null, {
+      statusCode: 400,
+      body: JSON.stringify({
+        error: "Missing shop parameter"
+      })
+    });
+  }
+
+  // create oauth flow
+  const authorizationURI = oauth2(shop).authorizationCode.authorizeURL({
     redirect_uri: config.redirect_uri,
-    /* Specify how your app needs to access the user’s account. http://bit.ly/intercom-scopes */
-    scope: "",
-    /* State helps mitigate CSRF attacks & Restore the previous state of your app */
-    state: ""
+    scope: "write_orders",
+    state: state
   });
 
-  /* Redirect user to authorizationURI */
-  const response = {
+  return callback(null, {
     statusCode: 302,
     headers: {
       Location: authorizationURI,
-      "Cache-Control": "no-cache" // Disable caching of this response
+      "Set-Cookie": `state=${state}`,
+      "Access-Control-Allow-Credentials": true,
+      "Cache-Control": "no-cache"
     },
-    body: "" // return body for local dev
-  };
-
-  return callback(null, response);
+    body: ""
+  });
 };
-/* const dotenv = require("dotenv").config();
-const nonce = require("nonce")();
-
-const apiKey = process.env.SHOPIFY_API_KEY;
-const apiSecret = process.env.SHOPIFY_API_SECRET;
-const scopes = "read_products";
-const forwardingAddress = process.env.BASE_URL;
-
-exports.handler = (event, context, callback) => {
-  let response;
-
-  if (
-    typeof event.queryStringParameters != "null" &&
-    typeof event.queryStringParameters.shop != "null"
-  ) {
-    const shop = event.queryStringParameters.shop;
-    const state = nonce();
-    const redirectUri =
-      forwardingAddress + "/.netlify/functions/shopify-auth-callback";
-    const installUrl =
-      "https://" +
-      shop +
-      "/admin/oauth/authorize?client_id=" +
-      apiKey +
-      "&scope=" +
-      scopes +
-      "&state=" +
-      state +
-      "&redirect_uri=" +
-      redirectUri;
-
-    response = {
-      statusCode: 301,
-      headers: {
-        "Set-Cookie": "state=" + state + ";",
-        Cookie: "state=" + state + ";",
-        Location: installUrl
-      },
-      body: null
-    };
-  } else {
-    response = {
-      statusCode: 400,
-      body: JSON.stringify({
-        message:
-          "Missing shop parameter. Please add ?shop=your-development-shop.myshopify.com to your request"
-      })
-    };
-  }
-
-  callback(null, response);
-};
- */
