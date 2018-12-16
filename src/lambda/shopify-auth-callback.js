@@ -1,5 +1,5 @@
+import config from "../../config";
 import oauth2, {
-  config,
   isValidHostname,
   getStateFromCookies,
   getShopFromHostname
@@ -10,6 +10,7 @@ exports.handler = (event, context, callback) => {
   const shop = getShopFromHostname(shopHostname);
   const storedState = getStateFromCookies(event.headers);
 
+  // bail if state is invalid or shop is incorrect format
   if (
     typeof state !== "string" ||
     state !== storedState ||
@@ -24,6 +25,7 @@ exports.handler = (event, context, callback) => {
     });
   }
 
+  // oauth flow
   oauth2(shop)
     .authorizationCode.getToken({
       code: code,
@@ -42,9 +44,19 @@ exports.handler = (event, context, callback) => {
     .then(result => {
       console.log("result", result);
       // return results to browser
-      return callback(null, {
+      /* return callback(null, {
         statusCode: 200,
         body: JSON.stringify(result)
+      }); */
+      return callback(null, {
+        statusCode: 302,
+        headers: {
+          Location: config.appUrl
+          /* "Set-Cookie": `state=${state}`,
+          "Access-Control-Allow-Credentials": true,
+          "Cache-Control": "no-cache" */
+        },
+        body: ""
       });
     })
     .catch(error => {

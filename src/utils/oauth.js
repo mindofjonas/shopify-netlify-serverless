@@ -1,19 +1,6 @@
-import dotenv from "dotenv";
 import cookie from "cookie";
 import simpleOauth from "simple-oauth2";
-dotenv.config();
-
-const shopifyApiBaseUrl = "myshopify.com";
-const baseUrl = process.env.BASE_URL;
-
-export const config = {
-  clientId: process.env.SHOPIFY_API_KEY,
-  clientSecret: process.env.SHOPIFY_API_SECRET,
-  tokenHost: shopifyApiBaseUrl,
-  authorizePath: `${shopifyApiBaseUrl}/admin/oauth/authorize`,
-  tokenPath: `${shopifyApiBaseUrl}/admin/oauth/access_token`,
-  redirect_uri: `${baseUrl}/.netlify/functions/shopify-auth-callback`
-};
+import config from "../../config";
 
 export function isValidHostname(shopHostName) {
   return (
