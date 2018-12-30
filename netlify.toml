@@ -4,5 +4,5 @@
   status = 200
 [build]
   Command = "yarn build"
-  Functions = "lambda"
+  Functions = "functions"
   Publish = "build"

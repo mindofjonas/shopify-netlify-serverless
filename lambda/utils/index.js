@@ -1,5 +1,6 @@
 import cookie from "cookie";
 import simpleOauth from "simple-oauth2";
+import jwt from "jsonwebtoken";
 import config from "../../config";
 
 export function isValidHostname(shopHostName) {
@@ -16,13 +17,17 @@ export function getKeyFromCookies(headers, key) {
   return cookies[key] ? cookies[key] : null;
 }
 
+export function createCookie(name, content, options = null) {
+  return cookie.serialize(name, content, options);
+}
+
 export function getShopFromHostname(shopHostName) {
-  return shopHostName && typeof shopHostName === "string"
-    ? shopHostName
-        .trim()
-        .replace(/\/$/, "")
-        .replace(".myshopify.com", "")
-    : null;
+  return shopHostName && typeof shopHostName === "string" ?
+    shopHostName
+    .trim()
+    .replace(/\/$/, "")
+    .replace(".myshopify.com", "") :
+    null;
 }
 
 export function oauth2(shop) {
@@ -45,4 +50,19 @@ export function oauth2(shop) {
     throw new Error("MISSING REQUIRED ENV VARS. Please set SHOPIFY_API_SECRET");
   }
   return simpleOauth.create(credentials);
+}
+
+export function createToken(data) {
+  return jwt.sign(data, config.appSecret);
+}
+
+export function verifyToken(token) {
+  if (!token) {
+    throw new Error("Authorization Required");
+  }
+  try {
+    return jwt.verify(token, config.appSecret);
+  } catch (error) {
+    throw new Error("Authentication Failed");
+  }
 }

@@ -1,13 +1,19 @@
-import config from "../../config";
+import config from "../config";
 import {
   oauth2,
   isValidHostname,
   getKeyFromCookies,
-  getShopFromHostname
-} from "../utils";
+  createCookie,
+  getShopFromHostname,
+  createToken
+} from "./utils";
 
 exports.handler = (event, context, callback) => {
-  const { code, state, shop: shopHostname } = event.queryStringParameters;
+  const {
+    code,
+    state,
+    shop: shopHostname
+  } = event.queryStringParameters;
   const shop = getShopFromHostname(shopHostname);
   const storedState = getKeyFromCookies(event.headers, "state");
 
@@ -34,35 +40,36 @@ exports.handler = (event, context, callback) => {
       client_id: config.clientId,
       client_secret: config.clientSecret
     })
-    .then(result => {
-      const token = oauth2(shop).accessToken.create(result);
-      console.log("accessToken", token);
-      return token;
+    .then(response => {
+      const accessToken = oauth2(shop).accessToken.create(response);
+      return accessToken;
     })
-    // Get more info about shop
-    //.then(getStoreData)
-    // Do stuff with shop data & token
-    .then(result => {
-      console.log("result", result);
-      // return results to browser
-      /* return callback(null, {
-        statusCode: 200,
-        body: JSON.stringify(result)
-      }); */
+    .then(response => {
+      // do stuff with shop data & token (save to database, make API calls, etc) here
+
+      // create jwt
+      const token = createToken({
+        shop: shopHostname,
+        access_token: response.token.access_token
+      });
+
+      // return results to browser with token in cookie
       return callback(null, {
         statusCode: 302,
         headers: {
-          Location: config.appUrl
-          /* "Set-Cookie": `state=${state}`,
+          Location: `${config.appUrl}`,
+          "Set-Cookie": createCookie("token", token, {
+            secure: true,
+            httpOnly: true
+          }),
           "Access-Control-Allow-Credentials": true,
-          "Cache-Control": "no-cache" */
+          "Cache-Control": "no-cache"
         },
         body: ""
       });
     })
     .catch(error => {
       console.log("Access Token Error", error.message);
-      console.log(error);
       return callback(null, {
         statusCode: error.statusCode || 500,
         body: JSON.stringify({

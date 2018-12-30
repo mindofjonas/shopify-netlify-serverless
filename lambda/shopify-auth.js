@@ -1,14 +1,24 @@
 import * as crypto from "crypto";
-import config from "../../config";
-import { oauth2 } from "../utils";
+import config from "../config";
+import {
+  oauth2,
+  createCookie
+} from "./utils";
 
 exports.handler = (event, context, callback) => {
-  const { shop } = event.queryStringParameters;
+  const {
+    shop
+  } = event.queryStringParameters;
   const state = crypto.randomBytes(20).toString("hex");
 
   // bail if not GET request
   if (event.httpMethod !== "GET") {
-    return callback(null, { statusCode: 405, body: "Method Not Allowed" });
+    return callback(null, {
+      statusCode: 405,
+      body: JSON.stringify({
+        error: "Method Not Allowed"
+      })
+    });
   }
 
   // bail if shop missing
@@ -16,7 +26,7 @@ exports.handler = (event, context, callback) => {
     return callback(null, {
       statusCode: 400,
       body: JSON.stringify({
-        error: "Missing shop parameter"
+        error: "Missing Shop Parameter"
       })
     });
   }
@@ -28,12 +38,15 @@ exports.handler = (event, context, callback) => {
     state: state
   });
 
-  // respond with state in cookie
+  // redirect to authorization url
   return callback(null, {
     statusCode: 302,
     headers: {
       Location: authorizationURI,
-      "Set-Cookie": `state=${state}`,
+      "Set-Cookie": createCookie("state", state, {
+        secure: true,
+        httpOnly: true
+      }),
       "Access-Control-Allow-Credentials": true,
       "Cache-Control": "no-cache"
     },
