@@ -1,10 +1,7 @@
-import React, {Component} from 'react';
+import React from "react";
 
-class SettingsView extends Component {
-  state = {};
-  render() {
-    return <section>Settings View</section>;
-  }
-}
+const SettingsView = () => {
+  return <section>Settings View</section>;
+};
 
 export default SettingsView;

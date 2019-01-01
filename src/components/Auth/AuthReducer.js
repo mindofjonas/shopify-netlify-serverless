@@ -15,7 +15,7 @@ const auth = createReducer(initialState, {
     return { ...state, authenticated: true, shop: payload, loading: false };
   },
   [types.AUTHENTICATION_FAILURE](state) {
-    return { ...state, authenticated: false, loading: false };
+    return { ...state, authenticated: false, shop: null, loading: false };
   }
 });
 

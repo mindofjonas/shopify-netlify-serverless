@@ -1,17 +1,12 @@
 import React, { Component } from "react";
-import { BrowserRouter as Router, Route, Switch, Link } from "react-router-dom";
-import { connect } from "react-redux";
+import { BrowserRouter as Router, Switch, Link } from "react-router-dom";
 import AuthRoute from "./components/Auth/AuthRoute";
 import DashboardView from "./views/DashboardView";
 import SettingsView from "./views/SettingsView";
 import InstallView from "./views/InstallView";
-import { authenticateShop } from "./components/Auth/AuthActions";
 import "./App.css";
 
 class App extends Component {
-  async componentDidMount() {
-    await this.props.authenticateShop();
-  }
   render() {
     return (
       <Router>
@@ -25,7 +20,7 @@ class App extends Component {
           <div className="app-content">
             <Switch>
               <AuthRoute exact path="/" component={DashboardView} />
-              <Route exact path="/install" component={InstallView} />
+              <AuthRoute exact path="/install" component={InstallView} />
               <AuthRoute exact path="/settings" component={SettingsView} />
             </Switch>
           </div>
@@ -35,7 +30,4 @@ class App extends Component {
   }
 }
 
-export default connect(
-  null,
-  { authenticateShop }
-)(App);
+export default App;
