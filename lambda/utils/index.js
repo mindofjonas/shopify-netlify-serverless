@@ -58,7 +58,7 @@ export function createToken(data) {
 
 export function verifyToken(token) {
   if (!token) {
-    throw new Error("Authorization Required");
+    return false;
   }
   try {
     return jwt.verify(token, config.appSecret);

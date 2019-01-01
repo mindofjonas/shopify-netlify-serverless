@@ -1,10 +1,7 @@
-import React, {Component} from 'react';
+import React from "react";
 
-class DashboardView extends Component {
-  state = {};
-  render() {
-    return <section>Logged In View</section>;
-  }
-}
+const DashboardView = () => {
+  return <section>Logged In View</section>;
+};
 
 export default DashboardView;
