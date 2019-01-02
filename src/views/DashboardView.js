@@ -1,7 +1,11 @@
 import React from "react";
 
 const DashboardView = () => {
-  return <section>Logged In View</section>;
+  return (
+    <section>
+      <h1>Logged In View</h1>
+    </section>
+  );
 };
 
 export default DashboardView;
