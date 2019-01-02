@@ -6,7 +6,7 @@ import { authenticateShop } from "./AuthActions";
 class AuthRoute extends React.Component {
   state = {};
   componentDidMount() {
-    //this.props.authenticateShop();
+    this.props.authenticateShop();
   }
   componentDidUpdate(prevProps) {
     if (
