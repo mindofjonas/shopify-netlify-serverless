@@ -17,7 +17,7 @@ class App extends Component {
                 <Link to="/">Install</Link>
               </li>
               <li>
-                <Link to="/install">Dashboard</Link>
+                <Link to="/install">Dashboard (Protected)</Link>
               </li>
             </ul>
           </section>
