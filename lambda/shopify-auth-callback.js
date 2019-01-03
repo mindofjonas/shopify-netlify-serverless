@@ -69,7 +69,7 @@ exports.handler = (event, context, callback) => {
       });
     })
     .catch(error => {
-      console.log("Access Token Error", error.message);
+      console.log("OAuth Error", error.message);
       return callback(null, {
         statusCode: error.statusCode || 500,
         body: JSON.stringify({
