@@ -45,7 +45,8 @@ exports.handler = (event, context, callback) => {
       Location: authorizationURI,
       "Set-Cookie": createCookie("state", state, {
         secure: true,
-        httpOnly: true
+        httpOnly: true,
+        expires: new Date(Date.now() + 300000)
       }),
       "Access-Control-Allow-Credentials": true,
       "Cache-Control": "no-cache"

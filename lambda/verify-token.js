@@ -6,7 +6,6 @@ import {
 
 exports.handler = (event, context, callback) => {
   const token = getKeyFromCookies(event.headers, "token");
-  console.log(token);
 
   // bail if not GET request
   if (event.httpMethod !== "GET") {
@@ -34,10 +33,10 @@ exports.handler = (event, context, callback) => {
     return callback(null, {
       statusCode: 400,
       headers: {
-        "Set-Cookie": createCookie("token", 'unauthenticated', {
+        "Set-Cookie": createCookie("token", '', {
           secure: true,
           httpOnly: true,
-          path: '/'
+          expires: new Date()
         })
       },
       body: JSON.stringify({
