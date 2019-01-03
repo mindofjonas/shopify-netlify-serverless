@@ -12,7 +12,7 @@ class InstallView extends Component {
     if (!this.state.shopName) {
       alert("Please enter your Shopify store name");
     } else {
-      window.location = `/.netlify/functions/shopify-oauth?shop=${
+      window.location = `/.netlify/functions/shopify-auth?shop=${
         this.state.shopName
       }.myshopify.com`;
     }
