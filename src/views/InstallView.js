@@ -14,7 +14,7 @@ class InstallView extends Component {
     } else {
       window.location = `/.netlify/functions/shopify-auth?shop=${
         this.state.shopName
-      }.myshopify.com`;
+      }`;
     }
   };
   render() {
