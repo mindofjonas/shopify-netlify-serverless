@@ -34,7 +34,7 @@ exports.handler = (event, context, callback) => {
   // oauth flow
   const authorizationURI = oauth2(shop).authorizationCode.authorizeURL({
     redirect_uri: config.redirect_uri,
-    scope: "write_orders",
+    scope: "read_products",
     state: state
   });
 
