@@ -49,21 +49,14 @@ exports.handler = (event, context, callback) => {
 
       // create jwt
       const token = createToken({
-        shop: shopHostname,
-        access_token: response.token.access_token
+        shop: shopHostname
       });
 
       // return results to browser with token in cookie
       return callback(null, {
         statusCode: 302,
         headers: {
-          Location: `${config.appUrl}`,
-          "Set-Cookie": createCookie("token", token, {
-            secure: true,
-            httpOnly: true
-          }),
-          "Access-Control-Allow-Credentials": true,
-          "Cache-Control": "no-cache"
+          Location: `${config.appUrl}?token=${encodeURIComponent(token)}`,
         },
         body: ""
       });
