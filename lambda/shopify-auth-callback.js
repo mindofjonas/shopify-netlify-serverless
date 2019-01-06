@@ -45,14 +45,13 @@ exports.handler = (event, context, callback) => {
       client_id: config.clientId,
       client_secret: config.clientSecret
     })
-    .then(response => {
-      const accessToken = oauth2(shop).accessToken.create(response);
+    .then(oauthRsponse => {
+      const accessToken = oauth2(shop).accessToken.create(oauthRsponse);
       return accessToken;
     })
-    .then(response => {
+    .then(tokenResponse => {
       // do stuff with shop data & token (save to database, make API calls, etc) here
-      saveShop(shopHostname, response.token.access_token, knex).then(shop => {
-        console.log(shop);
+      saveShop(shopHostname, tokenResponse.token.access_token, knex).then(dbResponse => {
         // create jwt
         const token = createToken({
           shop: shopHostname
