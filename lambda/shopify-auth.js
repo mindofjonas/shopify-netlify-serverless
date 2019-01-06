@@ -1,15 +1,18 @@
-import * as crypto from "crypto";
 import config from "../config";
 import {
   oauth2,
-  createCookie
+  createToken
 } from "./utils";
 
 exports.handler = (event, context, callback) => {
   const {
     shop
   } = event.queryStringParameters;
-  const state = crypto.randomBytes(20).toString("hex");
+  const state = createToken({
+    shop,
+  }, {
+    expiresIn: 120
+  });
 
   // bail if not GET request
   if (event.httpMethod !== "GET") {
@@ -38,19 +41,12 @@ exports.handler = (event, context, callback) => {
     state: state
   });
 
+  console.log(authorizationURI)
   // redirect to authorization url
   return callback(null, {
     statusCode: 302,
     headers: {
-      Location: authorizationURI,
-      "Set-Cookie": createCookie("state", state, {
-        secure: true,
-        httpOnly: true,
-        expires: new Date(Date.now() + 300000)
-      }),
-      "Access-Control-Allow-Credentials": true,
-      "Cache-Control": "no-cache"
-    },
-    body: ""
+      Location: authorizationURI
+    }
   });
 };

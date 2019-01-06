@@ -54,8 +54,8 @@ export function oauth2(shop) {
   return simpleOauth.create(credentials);
 }
 
-export function createToken(data) {
-  return jwt.sign(data, config.appSecret);
+export function createToken(data, options = null) {
+  return jwt.sign(data, config.appSecret, options);
 }
 
 export function verifyToken(token) {

@@ -3,9 +3,9 @@ import config from "../config";
 import {
   oauth2,
   isValidHostname,
-  getKeyFromCookies,
   getShopFromHostname,
   createToken,
+  verifyToken,
   saveShop
 } from "./utils";
 
@@ -16,7 +16,6 @@ exports.handler = async (event, context, callback) => {
     shop: shopHostname
   } = event.queryStringParameters;
   const shop = getShopFromHostname(shopHostname);
-  const storedState = getKeyFromCookies(event.headers, "state");
   const knex = Knex(config.database);
 
   context.callbackWaitsForEmptyEventLoop = false;
@@ -24,7 +23,6 @@ exports.handler = async (event, context, callback) => {
   // bail if state is invalid or shop is incorrect format
   if (
     typeof state !== "string" ||
-    state !== storedState ||
     !shop ||
     !isValidHostname(shopHostname)
   ) {
@@ -38,6 +36,8 @@ exports.handler = async (event, context, callback) => {
 
   // oauth flow
   try {
+    const decodedState = await verifyToken(state);
+
     const oauthRsponse = await oauth2(shop)
       .authorizationCode.getToken({
         code: code,
@@ -61,8 +61,7 @@ exports.handler = async (event, context, callback) => {
       statusCode: 302,
       headers: {
         Location: `${config.appUrl}?token=${encodeURIComponent(token)}`,
-      },
-      body: ""
+      }
     });
   } catch (error) {
     console.log("Authentication Error", error.message);
@@ -74,4 +73,5 @@ exports.handler = async (event, context, callback) => {
       })
     });
   };
+};
 };
