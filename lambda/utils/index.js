@@ -1,6 +1,7 @@
 import cookie from "cookie";
 import simpleOauth from "simple-oauth2";
 import jwt from "jsonwebtoken";
+import axios from "axios";
 import util from 'util';
 import config from "../../config";
 
@@ -59,13 +60,22 @@ export function createToken(data) {
 
 export function verifyToken(token) {
   if (!token) {
-    return false;
+    throw new Error("Token Required");
   }
   try {
     return jwt.verify(token, config.appSecret);
   } catch (error) {
     throw new Error("Authentication Failed");
   }
+}
+
+export function shopifyAPI(shopHostName, accessToken, endpoint, options) {
+  return axios(`https://${shopHostName+endpoint}`, { ...options,
+    headers: {
+      "X-Shopify-Access-Token": accessToken
+    },
+    withCredentials: true
+  })
 }
 
 export function saveShop(shopHostName, accessToken, knex) {
@@ -86,4 +96,10 @@ export function saveShop(shopHostName, accessToken, knex) {
   );
 
   return knex.raw(query);
+}
+
+export function getShop(shopHostName, knex) {
+  return knex('shops').where({
+    shopify_domain: shopHostName
+  }).select(['shopify_domain', 'access_token']);
 }

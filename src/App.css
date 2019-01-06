@@ -426,3 +426,11 @@ section {
 .shop-name span {
   background-color: lightgray;
 }
+
+.products-list {
+  text-align: left;
+  max-width: 480px;
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+}
