@@ -11,3 +11,4 @@
   SHOPIFY_API_SECRET = "Shopify API Secret"
   APP_URL = "Public (https) URL of the app. Must match url in Shopify app settings"
   APP_SECRET = "Secret for signing JWT"
+  DATABASE_URL = "Postgres database URL"
