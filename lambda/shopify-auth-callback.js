@@ -63,9 +63,11 @@ exports.handler = async (event, context, callback) => {
         Location: `${config.appUrl}?token=${encodeURIComponent(token)}`,
       }
     });
+
   } catch (error) {
     console.log("Authentication Error", error.message);
     knex.client.destroy();
+
     return callback(null, {
       statusCode: error.statusCode || 500,
       body: JSON.stringify({
@@ -73,5 +75,4 @@ exports.handler = async (event, context, callback) => {
       })
     });
   };
-};
 };
