@@ -46,7 +46,7 @@ exports.handler = async (event, context, callback) => {
         client_secret: config.clientSecret
       })
 
-    const tokenResponse = oauth2(shop).accessToken.create(oauthRsponse);
+    const tokenResponse = await oauth2(shop).accessToken.create(oauthRsponse);
 
     const dbResponse = await saveShop(shopHostname, tokenResponse.token.access_token, knex);
 
