@@ -7,17 +7,19 @@ class DashboardView extends Component {
   componentDidMount() {
     this.getProducts();
   }
-  getProducts() {
-    axios("/.netlify/functions/get-products", {
-      headers: {
-        Authorization: Auth.getToken()
-      },
-      withCredentials: true
-    })
-      .then(response => {
-        this.setState({ products: response.data.products });
-      })
-      .catch(error => console.log("Error retrieving products"));
+  async getProducts() {
+    try {
+      const response = await axios("/.netlify/functions/get-products", {
+        headers: {
+          Authorization: Auth.getToken()
+        },
+        withCredentials: true
+      });
+
+      this.setState({ products: response.data.products });
+    } catch (error) {
+      console.log("Error retrieving products");
+    }
   }
   render() {
     const { products } = this.state;
