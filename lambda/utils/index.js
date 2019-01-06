@@ -1,6 +1,7 @@
 import cookie from "cookie";
 import simpleOauth from "simple-oauth2";
 import jwt from "jsonwebtoken";
+import util from 'util';
 import config from "../../config";
 
 export function isValidHostname(shopHostName) {
@@ -65,4 +66,24 @@ export function verifyToken(token) {
   } catch (error) {
     throw new Error("Authentication Failed");
   }
+}
+
+export function saveShop(shopHostName, accessToken, knex) {
+  const insert = knex('shops').insert({
+    shopify_domain: shopHostName,
+    access_token: accessToken
+  }).toString();
+
+  const update = knex('shops')
+    .update({
+      access_token: accessToken
+    })
+    .whereRaw(`shops.shopify_domain = '${shopHostName}'`);
+  const query = util.format(
+    '%s ON CONFLICT (shopify_domain) DO UPDATE SET %s',
+    insert.toString(),
+    update.toString().replace(/^update\s.*\sset\s/i, '')
+  );
+
+  return knex.raw(query);
 }

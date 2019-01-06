@@ -3,10 +3,15 @@ import {
   oauth2,
   isValidHostname,
   getKeyFromCookies,
-  createCookie,
   getShopFromHostname,
-  createToken
+  createToken,
+  saveShop
 } from "./utils";
+
+const knexDialect = require('knex/lib/dialects/postgres');
+const knex = require("knex")({ ...config.database,
+  client: knexDialect
+});
 
 exports.handler = (event, context, callback) => {
   const {
@@ -46,23 +51,25 @@ exports.handler = (event, context, callback) => {
     })
     .then(response => {
       // do stuff with shop data & token (save to database, make API calls, etc) here
+      saveShop(shopHostname, response.token.access_token, knex).then(shop => {
+        console.log(shop);
+        // create jwt
+        const token = createToken({
+          shop: shopHostname
+        });
 
-      // create jwt
-      const token = createToken({
-        shop: shopHostname
-      });
-
-      // return results to browser with token in cookie
-      return callback(null, {
-        statusCode: 302,
-        headers: {
-          Location: `${config.appUrl}?token=${encodeURIComponent(token)}`,
-        },
-        body: ""
-      });
+        // return results to browser with token in cookie
+        return callback(null, {
+          statusCode: 302,
+          headers: {
+            Location: `${config.appUrl}?token=${encodeURIComponent(token)}`,
+          },
+          body: ""
+        });
+      }).catch(error => error)
     })
     .catch(error => {
-      console.log("OAuth Error", error.message);
+      console.log("Authentication Error", error.message);
       return callback(null, {
         statusCode: error.statusCode || 500,
         body: JSON.stringify({
